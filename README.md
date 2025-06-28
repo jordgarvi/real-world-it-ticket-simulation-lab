@@ -40,4 +40,4 @@ Each markdown file under the `tickets/` folder represents a separate support cas
 
 ## Notes
 
-This is a personal learning lab built to replicate real support scenarios as a solo project. Each scenario is designed to demonstrate initiative and practical knowledge, helping bridge the gap between study and real-world IT roles.
+This is a personal learning lab built to replicate real support scenarios as a solo project. Each scenario is designed to demonstrate initiative and practical knowledge, helping bridge the gap between study and real world IT roles.
