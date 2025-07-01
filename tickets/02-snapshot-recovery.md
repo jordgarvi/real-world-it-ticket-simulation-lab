@@ -16,3 +16,27 @@ After applying recent system updates and configuration changes, the Ubuntu VM be
 - Host OS: Windows 11 Version 24H2
 - Snapshot Name: "Ubuntu Clean Install"
 - Snapshot Created Date: 29-06-2025
+
+## Symptoms
+The VM fails to boot correctly and displays GRUB boot loader errors during startup.
+
+| Description           | Image                               |
+|-----------------------|------------------------------------|
+| Snapshot before issue | ![](../images/snapshot-before.png) |
+| GRUB Boot Failure     | ![](../images/grub-boot-error.png) |
+
+The user reports the VM stuck at boot with multiple error messages preventing normal OS load.
+
+---
+
+## Next Steps: Initial Troubleshooting
+
+* [ ] Try fixes: check logs, run commands, restart services, update packages  
+* [ ] Take screenshot of terminal output showing errors or failed fixes
+
+  * Filename: `snapshot-troubleshoot.png`  
+  * Markdown: `![](../images/snapshot-troubleshoot.png)`
+
+* [ ] Write Initial Troubleshooting section including steps and screenshot  
+* [ ] Commit with message:  
+  `Add initial troubleshooting steps and terminal error logs`
