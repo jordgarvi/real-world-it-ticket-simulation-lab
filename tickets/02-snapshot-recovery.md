@@ -82,3 +82,10 @@ ip a
 | IP assigned after restore| ![](../images/ip-a-after-restore.png)          |
 
 > ✅ These results confirmed that the VM had returned to a stable, functioning state following the snapshot restoration.
+
+## Reflection
+
+This exercise showed me how important snapshots are for quickly recovering from unexpected issues. The VM’s inconsistent boot behavior caught me off guard. Sometimes it failed with errors, other times it booted fine but with warnings. This made me realise the value of thorough verification after fixes.
+
+Checking the boot logs was key to understanding the root of the problem instead of guessing. Overall, regular snapshots, careful troubleshooting, and good documentation are essential to handle real-world IT problems smoothly.
+
