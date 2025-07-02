@@ -18,14 +18,21 @@ After applying recent system updates and configuration changes, the Ubuntu VM be
 - Snapshot Created Date: 29-06-2025
 
 ## Symptoms
-The VM fails to boot correctly and displays GRUB boot loader errors during startup.
 
-| Description           | Image                               |
-|-----------------------|------------------------------------|
-| Snapshot before issue | ![](../images/snapshot-before.png) |
-| GRUB Boot Failure     | ![](../images/grub-boot-error.png) |
+Initially, the VM failed to boot and presented multiple GRUB error messages during startup, preventing normal access to the system. The user captured a screenshot at the time showing the failed boot sequence.
 
-The user reports the VM stuck at boot with multiple error messages preventing normal OS load.
+However, after leaving the machine powered off overnight, the VM unexpectedly booted to the Ubuntu desktop, though a warning message appeared at the top of the terminal referencing a pre-startup script error.
+
+While the system appeared functional on the surface, the inconsistent boot behavior raised concern about system stability.
+
+| Description                     | Image                                 |
+|---------------------------------|----------------------------------------|
+| Snapshot before issue           | ![](../images/snapshot-before.png)     |
+| GRUB boot failure               | ![](../images/grub-boot-error.png)     |
+| Pre-script warning during boot | ![](../images/pre-script-error.png)   |
+
+The user requested IT review and confirmation that the system was stable, and recovery steps were advised to ensure a clean working state.
+
 
 ---
 
