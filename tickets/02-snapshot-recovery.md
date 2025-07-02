@@ -46,32 +46,39 @@ After restoring the snapshot, the VM booted — but returned to the previously b
 
 > ✅ This confirms that the snapshot captured the VM *after* the problematic changes were made, validating both the timing of the snapshot and the recovery process.
 
+## Initial Troubleshooting
+
+After restoring the snapshot, the system booted but still displayed instability. To begin diagnostics, `boot.log` was reviewed for any critical failures during startup.
+
+### Steps Taken:
+
+1. Booted the VM into the current (problematic) state.
+2. Accessed the terminal using `Ctrl+Alt+F2` if necessary.
+3. Ran the following command to inspect boot messages:
+
+sudo less /var/log/boot.log
+
+4. Scanned for `[FAILED]` units or other error messages.
+5. Captured screenshot showing logged errors.
+
+| Description              | Image                                       |
+|--------------------------|---------------------------------------------|
+| Boot log with failures   | ![](../images/snapshot-troubleshoot.png)   |
+
+> 🧠 The log output confirmed the system was in a degraded state, supporting the need to fully restore to a known good configuration prior to the problematic changes.
+
 ## Verification
 
-After restoring the snapshot, the system initially entered **emergency mode** and displayed startup errors. However, upon rebooting the VM again later, it eventually booted successfully to the Ubuntu desktop without any visible errors.
+Once the snapshot was restored and boot log reviewed, the VM eventually booted normally again. The user confirmed desktop access and tested network functionality.
 
-Basic checks were carried out to verify system functionality:
+Terminal checks were run to confirm full recovery:
 
-- A ping test to an external site confirmed internet connectivity.
-- The `ip a` command confirmed that an IP address had been assigned via DHCP.
+ping google.com
+ip a
 
-| Description                    | Image                                              |
-|--------------------------------|----------------------------------------------------|
-| Ping success after boot        | ![](../images/ping-success-after-restore.png)      |
-| IP address via DHCP assigned  | ![](../images/ip-a-after-restore.png)              |
+| Description              | Image                                           |
+|--------------------------|-------------------------------------------------|
+| Ping test after restore  | ![](../images/ping-success-after-restore.png)  |
+| IP assigned after restore| ![](../images/ip-a-after-restore.png)          |
 
-Although the system now appears stable, the inconsistent recovery behavior suggests that underlying issues may still exist. Further monitoring is recommended.
-
----
-
-## Next Steps: Initial Troubleshooting
-
-* [ ] Try fixes: check logs, run commands, restart services, update packages  
-* [ ] Take screenshot of terminal output showing errors or failed fixes
-
-  * Filename: `snapshot-troubleshoot.png`  
-  * Markdown: `![](../images/snapshot-troubleshoot.png)`
-
-* [ ] Write Initial Troubleshooting section including steps and screenshot  
-* [ ] Commit with message:  
-  `Add initial troubleshooting steps and terminal error logs`
+> ✅ These results confirmed that the VM had returned to a stable, functioning state following the snapshot restoration.
