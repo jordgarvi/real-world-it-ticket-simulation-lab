@@ -29,10 +29,22 @@ While the system appeared functional on the surface, the inconsistent boot behav
 |---------------------------------|----------------------------------------|
 | Snapshot before issue           | ![](../images/snapshot-before.png)     |
 | GRUB boot failure               | ![](../images/grub-boot-error.png)     |
-| Pre-script warning during boot | ![](../images/pre-script-error.png)   |
+| Pre-script warning during boot  | ![](../images/pre-script-error.png)   |
 
 The user requested IT review and confirmation that the system was stable, and recovery steps were advised to ensure a clean working state.
 
+## Snapshot Recovery Steps
+
+The VM was powered off, and the previously created snapshot ("Ubuntu Clean Install") was restored using the VirtualBox Snapshots tab.
+
+| Description                  | Image                                         |
+|------------------------------|-----------------------------------------------|
+| Snapshot list before restore | ![](../images/snapshot-restore-before.png)    |
+| Restore confirmation dialog  | ![](../images/snapshot-restore-confirm.png)   |
+
+After restoring the snapshot, the VM booted — but returned to the previously broken state, entering **emergency mode** as expected.
+
+> ✅ This confirms that the snapshot captured the VM *after* the problematic changes were made, validating both the timing of the snapshot and the recovery process.
 
 ---
 
