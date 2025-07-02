@@ -46,6 +46,22 @@ After restoring the snapshot, the VM booted — but returned to the previously b
 
 > ✅ This confirms that the snapshot captured the VM *after* the problematic changes were made, validating both the timing of the snapshot and the recovery process.
 
+## Verification
+
+After restoring the snapshot, the system initially entered **emergency mode** and displayed startup errors. However, upon rebooting the VM again later, it eventually booted successfully to the Ubuntu desktop without any visible errors.
+
+Basic checks were carried out to verify system functionality:
+
+- A ping test to an external site confirmed internet connectivity.
+- The `ip a` command confirmed that an IP address had been assigned via DHCP.
+
+| Description                    | Image                                              |
+|--------------------------------|----------------------------------------------------|
+| Ping success after boot        | ![](../images/ping-success-after-restore.png)      |
+| IP address via DHCP assigned  | ![](../images/ip-a-after-restore.png)              |
+
+Although the system now appears stable, the inconsistent recovery behavior suggests that underlying issues may still exist. Further monitoring is recommended.
+
 ---
 
 ## Next Steps: Initial Troubleshooting
