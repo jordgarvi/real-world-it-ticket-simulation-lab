@@ -36,7 +36,7 @@ ip a
 ip route
 ```
 
-![Routing table showing misconfiguration](../images/ip route.png)
+![Routing table showing misconfiguration](../images/ip-route.png)
 
 - Inspected the NetworkManager connection details:
 
