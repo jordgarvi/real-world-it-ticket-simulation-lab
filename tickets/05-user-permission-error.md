@@ -73,7 +73,7 @@ Run the `groups` command to see which groups the user belongs to, verifying whet
 groups
 ```
 
-📸 Screenshot: ![](images/regular-user-whoami.png)
+📸 Screenshot: ![](../images/regular-user-whoami.png)
 
 ---
 
@@ -87,8 +87,8 @@ ls -l /etc/shadow
 ```
 
 📸 Screenshots:  
-- ![](images/nano-hosts-unwritable.png) (nano editing `/etc/hosts`)  
-- ![](images/permission-denied-shadow.png) (permission denied on `/etc/shadow`)
+- ![](../images/nano-hosts-unwritable.png) (nano editing `/etc/hosts`)  
+- ![](../images/permission-denied-shadow.png) (permission denied on `/etc/shadow`)
 
 ---
 
@@ -100,7 +100,7 @@ Check the contents of the sudoers file to confirm which users and groups have su
 sudo cat /etc/sudoers
 ```
 
-📸 Screenshot: ![](images/sudo-ls-success.png)
+📸 Screenshot: ![](../images/sudo-ls-success.png)
 
 Validate sudoers file syntax with:
 
