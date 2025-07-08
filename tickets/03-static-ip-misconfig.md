@@ -99,3 +99,64 @@ Each command provided insight into potential misconfiguration issues at differen
 
 > These symptoms confirmed a classic static IP misconfiguration: routing and DNS were incomplete, resulting in total internet loss.
 
+## 3. 🛠️ Fixing the Misconfiguration
+
+After confirming that the static IP assignment was causing connectivity issues, corrective action was taken.
+
+### Problem Recap
+
+After manually assigning a **static IP address** to the Ubuntu VM using `nmcli`, the system was **unable to access the internet**. Specifically:
+
+- The static IP (`10.0.2.50/24`), gateway (`10.0.2.2`), and DNS (`8.8.8.8`) were configured via `nmcli`.
+- Despite being applied correctly, `ping` tests to external IPs like `8.8.8.8` failed with `Destination Host Unreachable`.
+- Network interface settings showed the static IP was applied, but there was **no default route connectivity**, likely due to a misconfigured or unreachable gateway, or incorrect NAT handling in VirtualBox.
+
+### Fix Applied
+
+The static configuration was reverted to use **DHCP**, allowing the system to obtain a working dynamic IP configuration.
+
+```bash
+nmcli connection modify "netplan-enp0s3" ipv4.addresses ""
+nmcli connection modify "netplan-enp0s3" ipv4.gateway ""
+nmcli connection modify "netplan-enp0s3" ipv4.dns ""
+nmcli connection modify "netplan-enp0s3" ipv4.method auto
+nmcli connection down "netplan-enp0s3"
+nmcli connection up "netplan-enp0s3"
+```
+
+| Description                                | Image                                     |
+|--------------------------------------------|-------------------------------------------|
+| Static IP applied but no connectivity      | ![](../images/static-ip-fix.png)          |
+| DHCP settings re-applied to restore access | ![](../images/apply-fix.png)              |
+| Successful ping to 8.8.8.8 after fix       | ![](../images/successful-8.8.8.8-ping.png)|
+
+---
+
+## 4. ✅ Recovery Verification
+
+After reverting to DHCP:
+
+- `ip a` showed a valid dynamic IP (`192.168.0.x`)
+- `ip route` confirmed a correct default gateway
+- `/etc/resolv.conf` showed valid DNS servers
+- Pings to both `8.8.8.8` and `google.com` succeeded
+
+This confirmed full recovery of the network stack and validated that the original issue was caused by an incorrect static configuration.
+
+---
+
+## 5. 📓 Log & Reflection
+
+This misconfiguration was caused by an incomplete or incorrect static IP setup using `nmcli`. While the IP address itself was correctly assigned, the lack of a working route prevented outbound traffic.
+
+### What I Learned
+
+- Setting a static IP requires **carefully configuring all details**: IP, gateway, and DNS.
+- Forgetting to match the **gateway to the network range** or failing to account for **VirtualBox NAT settings** can result in no internet access.
+- Reverting to DHCP is a reliable way to quickly restore connectivity and confirm the root cause.
+- `nmcli`, `ip route`, and `resolv.conf` are critical tools for network troubleshooting.
+
+This is the kind of situation I would expect to face in real IT support scenarios, where identifying and reversing configuration errors under pressure is key to fast recovery.
+
+
+
