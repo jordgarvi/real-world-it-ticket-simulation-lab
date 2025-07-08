@@ -60,3 +60,59 @@ To reproduce the problem, the following steps were carried out:
 > These tests confirm that the user does not have elevated permissions by default but can access them using `sudo`.
 
 The next step is to verify group memberships, review sudo permissions, and consider hardening user policies.
+
+## Investigate & Isolate the Problem
+
+To diagnose the permission denied errors experienced by the regular user, the following steps were performed:
+
+### 1. Check User Group Memberships
+
+Run the `groups` command to see which groups the user belongs to, verifying whether they are part of the `sudo` group:
+
+```bash
+groups
+```
+
+📸 Screenshot: ![](images/regular-user-whoami.png)
+
+---
+
+### 2. Verify File Permissions
+
+List permissions of critical system files that the user tried to access but received errors on, such as `/etc/hosts` and `/etc/shadow`:
+
+```bash
+ls -l /etc/hosts
+ls -l /etc/shadow
+```
+
+📸 Screenshots:  
+- ![](images/nano-hosts-unwritable.png) (nano editing `/etc/hosts`)  
+- ![](images/permission-denied-shadow.png) (permission denied on `/etc/shadow`)
+
+---
+
+### 3. Review Sudoers Configuration
+
+Check the contents of the sudoers file to confirm which users and groups have sudo privileges:
+
+```bash
+sudo cat /etc/sudoers
+```
+
+📸 Screenshot: ![](images/sudo-ls-success.png)
+
+Validate sudoers file syntax with:
+
+```bash
+sudo visudo -c
+```
+
+---
+
+### Findings
+
+- The regular user is **not** a member of the `sudo` group and therefore lacks sudo privileges.
+- Permissions on critical files like `/etc/hosts` prevent modification by non-privileged users.
+- Sudo privileges must be granted by adding the user to the appropriate group (`sudo`).
+
