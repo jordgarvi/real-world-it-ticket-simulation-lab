@@ -58,3 +58,44 @@ ping -c 3 google.com
 ### Observed Result
 
 Both ping commands failed, confirming the network misconfiguration prevented internet access.
+
+## 2. Investigate & Isolate the Problem
+
+After confirming the network was unreachable, we began isolating the root cause.
+
+### Commands Used:
+
+```bash
+ip a
+ip route
+nmcli connection show
+cat /etc/netplan/*.yaml
+cat /etc/resolv.conf
+```
+
+Each command provided insight into potential misconfiguration issues at different network layers.
+
+---
+
+### Investigation Output:
+
+| Description                            | Screenshot                                      |
+|----------------------------------------|-------------------------------------------------|
+| `ip a` output – verified current IP     | ![](../images/ip-a-investigation.png)           |
+| `ip route` – checked default route      | ![](../images/ip-route-investigation.png)       |
+| Netplan YAML – reviewed config file     | ![](../images/netplan-yaml.png)                 |
+| `nmcli` – validated connection settings | ![](../images/nmcli-show.png)                   |
+| DNS config – `/etc/resolv.conf`         | ![](../images/resolv-conf.png)                  |
+
+---
+
+### Observations:
+
+- IP address was set manually, but the default gateway was missing or incorrect.
+- Routing table (`ip route`) showed no usable path to external networks.
+- DNS resolution failed due to either no server or an unreachable server.
+- `netplan` YAML file lacked or misrepresented key networking fields.
+- `nmcli` confirmed the changes had applied but were misconfigured.
+
+> These symptoms confirmed a classic static IP misconfiguration: routing and DNS were incomplete, resulting in total internet loss.
+
