@@ -24,7 +24,7 @@ The Ubuntu VM was started, and a static IP address was manually assigned using N
 ip a
 ```
 
-![Terminal output of `ip a`](../images/Terminal output of ip a.png)
+![Terminal output of `ip a`](../images/Terminal-output-of-ip-a.png)
 
 - Applied a static IP with an incorrect gateway and subnet mask.
 
