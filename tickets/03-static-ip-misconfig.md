@@ -99,7 +99,7 @@ Each command provided insight into potential misconfiguration issues at differen
 
 > These symptoms confirmed a classic static IP misconfiguration: routing and DNS were incomplete, resulting in total internet loss.
 
-## 3. 🛠️ Fixing the Misconfiguration
+## 3. Fixing the Misconfiguration
 
 After confirming that the static IP assignment was causing connectivity issues, corrective action was taken.
 
@@ -132,7 +132,7 @@ nmcli connection up "netplan-enp0s3"
 
 ---
 
-## 4. ✅ Recovery Verification
+## 4. Recovery Verification
 
 After reverting to DHCP:
 
@@ -145,7 +145,7 @@ This confirmed full recovery of the network stack and validated that the origina
 
 ---
 
-## 5. 📓 Log & Reflection
+## 5. Log & Reflection
 
 This misconfiguration was caused by an incomplete or incorrect static IP setup using `nmcli`. While the IP address itself was correctly assigned, the lack of a working route prevented outbound traffic.
 
