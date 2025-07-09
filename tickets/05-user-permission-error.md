@@ -116,3 +116,70 @@ sudo visudo -c
 - Permissions on critical files like `/etc/hosts` prevent modification by non-privileged users.
 - Sudo privileges must be granted by adding the user to the appropriate group (`sudo`).
 
+## Verification
+
+After applying the necessary fix, I verified that the user `jordan-bradfield` could now successfully perform previously denied actions using `sudo`.
+
+### Retested Denied Command
+
+Previously, the user received a `[ File '/etc/hosts' is unwritable ]` error when trying to open `/etc/hosts` using `nano`.
+
+```bash
+nano /etc/hosts
+```
+
+After using `sudo`, the file was successfully opened in write mode:
+
+```bash
+sudo nano /etc/hosts
+```
+
+| Description                         | Image                                       |
+|-------------------------------------|---------------------------------------------|
+| `sudo nano /etc/hosts` success      | ![](../images/successful-hosts-edit.png)    |
+
+---
+
+### Validated System File Access
+
+The user could now also access protected files such as `/etc/shadow`:
+
+```bash
+sudo ls /etc/shadow
+```
+
+| Description                         | Image                                        |
+|-------------------------------------|----------------------------------------------|
+| `sudo ls /etc/shadow` success       | ![](../images/sudo-ls-shadow-success.png)    |
+
+---
+
+### Group Membership Confirmation
+
+To ensure the user had correct permissions, I checked group memberships:
+
+```bash
+groups
+```
+
+| Description               | Image                                 |
+|---------------------------|----------------------------------------|
+| Verified user groups      | ![](../images/regular-user-whoami.png) |
+
+No unnecessary group memberships were found, and `sudo` was present.
+
+---
+
+### Security Check & Fix Summary
+
+No unintended permission escalations were observed. The user was added to the `sudo` group using:
+
+```bash
+sudo usermod -aG sudo jordan-bradfield
+```
+
+No direct changes were made to `/etc/sudoers`. The default sudo policy (managed via group `sudo`) applied correctly.
+
+---
+
+
