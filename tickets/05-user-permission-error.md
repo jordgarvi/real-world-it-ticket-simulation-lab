@@ -164,7 +164,7 @@ groups
 
 | Description               | Image                                 |
 |---------------------------|----------------------------------------|
-| Verified user groups      | ![](../images/regular-user-whoami.png) |
+| Verified user groups      | ![](../images/regular-user-whoami2.png) |
 
 No unnecessary group memberships were found, and `sudo` was present.
 
