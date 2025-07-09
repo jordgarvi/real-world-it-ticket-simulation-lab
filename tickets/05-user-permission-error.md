@@ -120,6 +120,8 @@ sudo visudo -c
 
 After applying the necessary fix, I verified that the user `jordan-bradfield` could now successfully perform previously denied actions using `sudo`.
 
+---
+
 ### Retested Denied Command
 
 Previously, the user received a `[ File '/etc/hosts' is unwritable ]` error when trying to open `/etc/hosts` using `nano`.
@@ -182,4 +184,41 @@ No direct changes were made to `/etc/sudoers`. The default sudo policy (managed 
 
 ---
 
+## 5. 📓 Log & Reflect
+
+This was an interesting one! I logged into the Ubuntu VM as a regular user, only to find I couldn’t run some expected actions. For example, trying to edit `/etc/hosts` gave me a “file is unwritable” warning, and attempting to read `/etc/shadow` flat-out denied me. I believe these are classic permission errors, exactly what you would expect if the user isn't part of the right groups.
+
+At first, it wasn’t immediately obvious whether this was just standard user restriction or if the account had been misconfigured. I had to dig a little.
+
+### 🛠️ Commands I Used to Investigate
+
+- `whoami` – Confirmed I was logged in as the correct user.
+- `groups` – Checked what groups the user belonged to.
+- `ls -l` – Used to inspect file permissions on `/etc/hosts` and `/etc/shadow`.
+- `sudo cat /etc/sudoers` – Reviewed the sudo policy.
+- `sudo visudo -c` – Validated the sudoers syntax.
+
+### ✅ Commands to Test and Confirm Resolution
+
+- `sudo ls` – Confirmed general sudo access worked.
+- `sudo ls /etc/shadow` – Made sure elevated permission was granted when needed.
+- `sudo nano /etc/hosts` – Proved that system-level file edits now worked.
+
+### 📸 Screenshots Captured
+
+| Description                                 | Image                                           |
+|---------------------------------------------|--------------------------------------------------|
+| `whoami` output                             | ![](../images/regular-user-whoami.png)          |
+| Editing `/etc/hosts` without sudo           | ![](../images/nano-hosts-unwritable.png)        |
+| Successful `sudo ls` output                 | ![](../images/sudo-ls-success.png)              |
+| Permission denied on `/etc/shadow`          | ![](../images/permission-denied-shadow.png)     |
+| Successful read of `/etc/shadow` with sudo  | ![](../images/sudo-ls-shadow-success.png)       |
+
+### 💭 Final Thoughts
+
+This little issue was a great reminder of how *powerful* and *sensitive* permission management is on Linux systems. Missing sudo access could be intentional for security, or it could block someone from doing basic work. It’s essential to always confirm user group membership and keep a tight grip on who can do what — especially when dealing with system files.
+
+Also, running `visudo -c` to validate the sudoers file is a trick I’ll remember for real world case use. It's safer than directly editing the file and risking a misconfiguration.
+
+Next time I spin up a new VM or troubleshoot user access issues, I’ll be checking groups and sudo policies early on.
 
