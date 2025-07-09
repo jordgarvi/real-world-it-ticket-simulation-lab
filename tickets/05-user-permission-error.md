@@ -184,13 +184,13 @@ No direct changes were made to `/etc/sudoers`. The default sudo policy (managed 
 
 ---
 
-## 5. 📓 Log & Reflect
+## 5. Log & Reflect
 
 This was an interesting one! I logged into the Ubuntu VM as a regular user, only to find I couldn’t run some expected actions. For example, trying to edit `/etc/hosts` gave me a “file is unwritable” warning, and attempting to read `/etc/shadow` flat-out denied me. I believe these are classic permission errors, exactly what you would expect if the user isn't part of the right groups.
 
 At first, it wasn’t immediately obvious whether this was just standard user restriction or if the account had been misconfigured. I had to dig a little.
 
-### 🛠️ Commands I Used to Investigate
+### Commands I Used to Investigate
 
 - `whoami` – Confirmed I was logged in as the correct user.
 - `groups` – Checked what groups the user belonged to.
@@ -198,7 +198,7 @@ At first, it wasn’t immediately obvious whether this was just standard user re
 - `sudo cat /etc/sudoers` – Reviewed the sudo policy.
 - `sudo visudo -c` – Validated the sudoers syntax.
 
-### ✅ Commands to Test and Confirm Resolution
+### Commands to Test and Confirm Resolution
 
 - `sudo ls` – Confirmed general sudo access worked.
 - `sudo ls /etc/shadow` – Made sure elevated permission was granted when needed.
@@ -214,7 +214,7 @@ At first, it wasn’t immediately obvious whether this was just standard user re
 | Permission denied on `/etc/shadow`          | ![](../images/permission-denied-shadow.png)     |
 | Successful read of `/etc/shadow` with sudo  | ![](../images/sudo-ls-shadow-success.png)       |
 
-### 💭 Final Thoughts
+### Final Thoughts
 
 This little issue was a great reminder of how *powerful* and *sensitive* permission management is on Linux systems. Missing sudo access could be intentional for security, or it could block someone from doing basic work. It’s essential to always confirm user group membership and keep a tight grip on who can do what — especially when dealing with system files.
 
