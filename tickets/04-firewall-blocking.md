@@ -35,7 +35,21 @@ sudo ufw allow out to 192.168.0.1 port 67 proto udp
 - `curl https://example.com` times out
 
 ![Ping failure](../images/ping-fails-firewall.png)  
-![Curl failure](../images/curl-fails.png)
-````
 
 ---
+
+### ❌ curl Installation Fails (Expected)
+
+To further verify that outbound connections are blocked, we attempted to install `curl` using `apt`.
+
+```bash
+sudo apt install curl
+```
+
+The system fails to fetch packages from the Ubuntu mirrors due to the firewall denying HTTP/HTTPS traffic.
+
+📸 **Screenshot:**  
+APT error showing failed connections  
+![apt-install-fails-firewall](../images/apt-install-fails-firewall.png)
+
+This demonstrates how strict firewall rules can interfere with system operations like package installation — a realistic scenario in locked-down environments.
