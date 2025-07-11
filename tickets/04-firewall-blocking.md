@@ -15,6 +15,12 @@ After applying new firewall rules using `ufw`, the VM no longer has access to th
 - VirtualBox (NAT networking)
 - Internet connectivity tested via `ping` and `curl`
 
+## Notes / Terminology
+
+- **sudo:** Runs commands with administrative privileges.
+- **ufw:** Uncomplicated Firewall, a tool to manage firewall rules easily.
+
+
 ## Recreate the Issue
 
 To simulate a firewall misconfiguration, outbound internet traffic was intentionally blocked using `ufw`:
@@ -52,4 +58,4 @@ The system fails to fetch packages from the Ubuntu mirrors due to the firewall d
 APT error showing failed connections  
 ![apt-install-fails-firewall](../images/apt-install-fails-firewall.png)
 
-This demonstrates how strict firewall rules can interfere with system operations like package installation — a realistic scenario in locked-down environments.
+This demonstrates how strict firewall rules can interfere with system operations like package installation, a realistic scenario in locked down environments.
