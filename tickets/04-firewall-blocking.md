@@ -86,5 +86,24 @@ DNS response from `nslookup`
 
 ---
 
+### 2. Review Current UFW Rules
+
+To verify the firewall is still enforcing the intended restrictions, I re-checked UFW’s verbose status:
+
+```bash
+sudo ufw status verbose
+```
+
+Output confirms:
+- Default outgoing policy is set to **deny**
+- Only DNS (port 53) and DHCP (port 67) are allowed outbound
+
+📸 **Screenshot:**  
+UFW rule verification  
+![ufw-blocking-outbound](../images/ufw-blocking-outbound2.png)
+
+---
+
+
 
 
