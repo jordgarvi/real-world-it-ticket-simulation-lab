@@ -44,7 +44,7 @@ sudo ufw allow out to 192.168.0.1 port 67 proto udp
 
 ---
 
-### ❌ curl Installation Fails (Expected)
+### curl Installation Fails (Expected)
 
 To further verify that outbound connections are blocked, we attempted to install `curl` using `apt`.
 
@@ -65,5 +65,26 @@ This demonstrates how strict firewall rules can interfere with system operations
 Having confirmed that essential tools like `ping`, `curl`, and even `apt install curl` are being blocked by the firewall, I moved on to investigate which outbound services were affected and isolate the root cause of the connectivity issue.
 
 ---
+
+## Investigate & Isolate the Problem
+
+With internet access unavailable and the cause suspected to be firewall related, the next step is to investigate and isolate the source of the issue.
+
+### 1. Confirm DNS Resolution Works
+
+Since outbound DNS (port 53) was explicitly allowed, we tested name resolution:
+
+```bash
+nslookup google.com
+```
+
+ This command successfully returned IP addresses, confirming that DNS queries are permitted through the firewall.
+
+📸 **Screenshot:**  
+DNS response from `nslookup`  
+![dns-resolves](../images/dns-resolves.png)
+
+---
+
 
 
