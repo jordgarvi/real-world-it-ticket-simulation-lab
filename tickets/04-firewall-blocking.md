@@ -104,6 +104,17 @@ UFW rule verification
 
 ---
 
+### Isolation Summary
+
+- DNS queries resolve successfully → DNS is allowed  
+- APT and ping fail → HTTP, HTTPS, and ICMP are blocked  
+- Firewall is configured correctly to simulate this failure
+
+This confirms that **outbound restrictions in UFW are the root cause**, and the environment is correctly simulating a firewall blocking internet access.
+
+
+
+
 
 
 
