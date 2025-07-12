@@ -59,3 +59,11 @@ APT error showing failed connections
 ![apt-install-fails-firewall](../images/apt-install-fails-firewall.png)
 
 This demonstrates how strict firewall rules can interfere with system operations like package installation, a realistic scenario in locked down environments.
+
+---
+
+Having confirmed that essential tools like `ping`, `curl`, and even `apt install curl` are being blocked by the firewall, I moved on to investigate which outbound services were affected and isolate the root cause of the connectivity issue.
+
+---
+
+
