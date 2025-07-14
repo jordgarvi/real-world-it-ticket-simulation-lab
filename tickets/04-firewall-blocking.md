@@ -112,7 +112,29 @@ UFW rule verification
 
 This confirms that **outbound restrictions in UFW are the root cause**, and the environment is correctly simulating a firewall blocking internet access.
 
+---
 
+## ✅ Restore Outbound Web Access
+
+To fix the firewall misconfiguration, I explicitly allowed outbound HTTP and HTTPS traffic using the following commands:
+
+
+sudo ufw allow out 80/tcp     # Allow HTTP
+sudo ufw allow out 443/tcp    # Allow HTTPS
+
+
+These rules modify the firewall to permit web traffic, enabling functions like:
+
+- Downloading packages via `apt`
+- Accessing websites in a browser
+- Using tools like `curl` and `wget`
+
+📸 **Screenshots:**
+
+| Description                            | Image                                |
+|--------------------------------------|-------------------------------------|
+| After running `sudo ufw allow out 80` | ![](../images/ufw-allow-out-80.png) |
+| After running `sudo ufw allow out 443`| ![](../images/ufw-allow-out-443.png)|
 
 
 
