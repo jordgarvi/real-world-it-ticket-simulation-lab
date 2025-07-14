@@ -118,10 +118,10 @@ This confirms that **outbound restrictions in UFW are the root cause**, and the 
 
 To fix the firewall misconfiguration, I explicitly allowed outbound HTTP and HTTPS traffic using the following commands:
 
-
+```bash
 sudo ufw allow out 80/tcp     # Allow HTTP
 sudo ufw allow out 443/tcp    # Allow HTTPS
-
+```
 
 These rules modify the firewall to permit web traffic, enabling functions like:
 
