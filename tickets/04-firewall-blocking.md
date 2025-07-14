@@ -158,6 +158,44 @@ However, the ping failed with 100% packet loss, indicating internet access is st
 
 ---
 
+## Verify HTTP(S) and Apt Access (Test Success)
+
+### 1. Test Curl to a Website
+
+I ran the following command to verify HTTP(S) connectivity:
+
+```bash
+curl -I https://example.com
+```
+
+The command succeeded, returning HTTP status 200 and response headers, confirming outbound HTTP/HTTPS traffic is functional.
+
+📸 **Screenshots:**
+
+| Description                       | Image                           |
+| --------------------------------- | ------------------------------- |
+| Full output of successful curl    | ![](../images/curl-success-full.png)   |
+
+---
+
+### 2. Test Apt Package Update
+
+I ran the package update command to check repository access:
+
+```bash
+sudo apt update
+```
+
+This command succeeded, showing successful fetches from the package repositories.
+
+📸 **Screenshots:**
+
+| Description                      | Image                           |
+| -------------------------------- | ------------------------------- |
+| Full output of successful apt update | ![](../images/apt-update-success-full.png) |
+
+
+
 
 
 
