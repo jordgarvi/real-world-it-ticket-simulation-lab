@@ -114,7 +114,7 @@ This confirms that **outbound restrictions in UFW are the root cause**, and the 
 
 ---
 
-## ✅ Restore Outbound Web Access
+## Restore Outbound Web Access
 
 To fix the firewall misconfiguration, I explicitly allowed outbound HTTP and HTTPS traffic using the following commands:
 
@@ -135,6 +135,28 @@ These rules modify the firewall to permit web traffic, enabling functions like:
 |--------------------------------------|-------------------------------------|
 | After running `sudo ufw allow out 80` | ![](../images/ufw-allow-out-80.png) |
 | After running `sudo ufw allow out 443`| ![](../images/ufw-allow-out-443.png)|
+
+---
+
+## Verify Restored Internet Access (Test Fails)
+
+### 1. Test Ping to External IP
+
+I ran the following command to verify internet connectivity:
+
+```bash
+ping -c 4 8.8.8.8
+```
+
+However, the ping failed with 100% packet loss, indicating internet access is still blocked.
+
+📸 Screenshots:
+
+| Description                       | Image                              |
+|---------------------------------|----------------------------------|
+| Full output of failed ping command | ![](../images/ping-fail-full.png)  |
+
+---
 
 
 
