@@ -194,6 +194,75 @@ This command succeeded, showing successful fetches from the package repositories
 | -------------------------------- | ------------------------------- |
 | Full output of successful apt update | ![](../images/apt-update-success-full.png) |
 
+---
+
+## Test Real-World Internet Usage & Final Validation
+
+### 1. Install Curl Package
+
+To confirm package installation works, I ran:
+
+```bash
+sudo apt install curl -y
+```
+
+📸 **Screenshots:**
+
+| Description                       | Image                        |
+| --------------------------------- | ---------------------------- |
+| Full installation process         | ![](../images/apt-install-curl-full.png)    |
+
+---
+
+### 2. Curl Web Request
+
+To verify HTTP access, I fetched headers from a website:
+
+```bash
+curl -I https://example.com
+```
+
+📸 **Screenshots:**
+
+| Description                   | Image                      |
+| ----------------------------- | -------------------------- |
+| Full curl command output      | ![](../images/curl-request-full.png)   |
+
+---
+
+### 3.  IPv4 Ping Test
+
+To confirm stable internet connectivity, I ran:
+
+```bash
+ping -c 4 8.8.8.8
+```
+
+📸 **Screenshots:**
+
+| Description                     | Image                      |
+| ------------------------------- | -------------------------- |
+| Full ping command output        | ![](../images/ping-success-ipv4.png)       |
+
+---
+
+### 3.  IPv6 Ping Test
+
+To confirm stable internet connectivity, I ran:
+
+```bash
+ping6 -c 4 google.com
+```
+
+📸 **Screenshots:**
+
+| Description                     | Image                      |
+| ------------------------------- | -------------------------- |
+| Full ping IPv6 command output    | ![](../images/ping-success-ipv6.png)       |
+
+
+
+
 
 
 
