@@ -260,6 +260,33 @@ ping6 -c 4 google.com
 | ------------------------------- | -------------------------- |
 | Full ping IPv6 command output    | ![](../images/ping-success-ipv6.png)       |
 
+---
+
+## Final Summary
+
+After adjusting the firewall rules to explicitly allow outbound HTTP (port 80) and HTTPS (port 443) traffic, I verified internet connectivity and package access on the Ubuntu VM.
+
+First, I confirmed that the `curl` package could be installed successfully using `apt`, indicating that the VM could reach the package repositories without issues. Next, I used `curl` to fetch HTTP headers from `https://example.com`, which returned a valid HTTP 200 response, confirming outbound web traffic was working as expected.
+
+Finally, I ran ping tests using both IPv4 and IPv6 to verify network connectivity at the ICMP level. Both tests returned successful replies, showing that basic network communication was restored.
+
+Overall, these steps confirm that the firewall rules were the root cause of the earlier connectivity problems and that allowing outbound HTTP and HTTPS traffic resolved the issue.
+
+---
+
+## Next Steps
+
+- Keep an eye on the firewall configuration to ensure no other essential traffic is inadvertently blocked.  
+- Document these firewall changes clearly for future reference and troubleshooting.  
+- Consider adding monitoring alerts for connectivity issues to catch any future firewall misconfigurations early.  
+- Proceed to test other network services or simulate different firewall scenarios as needed.  
+- Once confident, close this ticket and move on to the next task.
+
+---
+
+This was a frustrating but valuable learning experience, figuring out how strict outbound firewall rules can silently block traffic took some digging, and troubleshooting the connectivity issues step-by-step really tested my patience.
+
+
 
 
 
