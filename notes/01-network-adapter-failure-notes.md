@@ -34,7 +34,7 @@ ip a
 ```
 
 - **What it does:** Shows all network interfaces and their IP addresses on the system.  
-- **Why we ran it:** To check if the VM had an active network interface with a valid IP address. Seeing only the loopback interface means no network was assigned.
+- **Why I ran it:** To check if the VM had an active network interface with a valid IP address. Seeing only the loopback interface means no network was assigned.
 
 ### 2. Test DNS resolution and connectivity:  
 ```bash
@@ -42,7 +42,7 @@ ping google.com
 ```
 
 - **What it does:** Sends ICMP echo requests (“pings”) to `google.com` to test network connectivity and DNS resolution.  
-- **Why we ran it:** To verify if the VM can reach external hosts and resolve domain names. The failure indicated either no network or broken DNS.
+- **Why I ran it:** To verify if the VM can reach external hosts and resolve domain names. The failure indicated either no network or broken DNS.
 
 ---
 
@@ -78,6 +78,38 @@ ping google.com
 ```
 
 - Successful ping responses confirm the VM can resolve domain names and communicate with external servers.
+
+---
+
+## Additional Troubleshooting Tips
+
+- If bridged mode does not work as expected, try switching the VM network adapter to **NAT** mode temporarily to check if that restores connectivity.  
+- Verify that the **host network adapter** is active and connected, as bridged mode relies on this.  
+- Check **VirtualBox host-only network** and firewall settings on the host machine, which can sometimes block or restrict VM network traffic.
+
+---
+
+## Potential Pitfalls and Warnings
+
+- Always **power off the VM** before changing VirtualBox network settings to avoid configuration errors or crashes.  
+- Bridged networking requires the host NIC to be **physically connected and active**; otherwise, the VM won’t get an IP address.  
+- Some **firewall or antivirus software** on the host can block VM network traffic, temporarily disable them if you suspect this.
+
+---
+
+## Broader Application of This Issue
+
+Although this issue occurred in VirtualBox, the principle of checking **virtualization layer settings** applies to other hypervisors like VMware and Hyper-V. Likewise, physical machines may encounter similar issues if network adapters are disabled or misconfigured.
+
+---
+
+## Key Takeaways
+
+> **Always check the virtualization layer and host network adapters first when a VM has connectivity issues.**  
+>  
+> Using simple commands like `ip a` and `ping` methodically helps quickly pinpoint network problems.  
+>  
+> Documenting troubleshooting steps clearly makes it easier to reproduce and resolve similar issues in the future.
 
 ---
 
