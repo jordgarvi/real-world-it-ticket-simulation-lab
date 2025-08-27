@@ -1,91 +1,95 @@
 # Ticket 02 – Snapshot Recovery
 
-## Ticket Source
-- **Ticket ID:** 0002-SR (Snapshot Recovery)
-- **Date Reported:** 01-07-2025
-- **Time Reported:** 21:15 GMT
-- **Reported by:** Internal user "jordanb"
-- **Received via:** Internal IT support request
+## Incident Logging
+- **Ticket ID:** 0002-SR  
+- **Date/Time Reported:** 01-07-2025, 21:15 GMT  
+- **Reported by:** Internal user *jordanb*  
+- **Channel:** Internal IT support request  
+
+---
+
+## Categorisation & Priority
+- **Category:** Virtualization / System Recovery  
+- **Impact:** Single VM (Ubuntu 22.04)  
+- **Urgency:** High (system unstable and unbootable)  
+- **Priority:** P2 (High)  
+
+---
 
 ## Issue Summary
-After applying recent system updates and configuration changes, the Ubuntu VM became unstable and failed to boot properly. The user reports error messages during startup and inability to access services. A snapshot recovery is needed to restore the VM to a known good state.
+After applying updates and configuration changes, the Ubuntu VM failed to boot consistently and showed GRUB and pre-startup script errors. A snapshot recovery was required to return the VM to a known good state.  
+
+---
 
 ## Environment
-- VirtualBox 7.1.6
-- Ubuntu 22.04 LTS
-- Host OS: Windows 11 Version 24H2
-- Snapshot Name: "Ubuntu Clean Install"
-- Snapshot Created Date: 29-06-2025
+- VirtualBox 7.1.6  
+- Ubuntu 22.04 LTS  
+- Host OS: Windows 11 (24H2)  
+- Snapshot: **Ubuntu Clean Install**  
+- Snapshot Date: 29-06-2025  
+
+---
 
 ## Symptoms
-
-Initially, the VM failed to boot and presented multiple GRUB error messages during startup, preventing normal access to the system. The user captured a screenshot at the time showing the failed boot sequence.
-
-However, after leaving the machine powered off overnight, the VM unexpectedly booted to the Ubuntu desktop, though a warning message appeared at the top of the terminal referencing a pre-startup script error.
-
-While the system appeared functional on the surface, the inconsistent boot behavior raised concern about system stability.
+- VM failed to boot, showing GRUB error messages.  
+- Inconsistent behavior: sometimes booted to desktop but with warning message referencing a pre-startup script.  
+- User unable to confirm stability or reliability.  
 
 | Description                     | Image                                 |
 |---------------------------------|----------------------------------------|
 | Snapshot before issue           | ![](../images/snapshot-before.png)     |
 | GRUB boot failure               | ![](../images/grub-boot-error.png)     |
-| Pre-script warning during boot  | ![](../images/pre-script-error.png)   |
+| Pre-script warning during boot  | ![](../images/pre-script-error.png)    |
 
-The user requested IT review and confirmation that the system was stable, and recovery steps were advised to ensure a clean working state.
+---
 
-## Snapshot Recovery Steps
+## Investigation & Diagnosis
+- Restored snapshot “Ubuntu Clean Install” from VirtualBox.  
+- System entered **emergency mode**, confirming the snapshot had been taken *after* the problematic changes.  
+- Boot log (`/var/log/boot.log`) reviewed: `[FAILED]` units identified, confirming degraded system state.  
 
-The VM was powered off, and the previously created snapshot ("Ubuntu Clean Install") was restored using the VirtualBox Snapshots tab.
+| Description                    | Image                                     |
+|--------------------------------|--------------------------------------------|
+| Boot log with failures         | ![](../images/snapshot-troubleshoot.png)   |
 
-| Description                  | Image                                         |
-|------------------------------|-----------------------------------------------|
-| Snapshot list before restore | ![](../images/snapshot-restore-before.png)    |
-| Restore confirmation dialog  | ![](../images/snapshot-restore-confirm.png)   |
+**Root Cause:**  
+Snapshot was captured *after* unstable updates/configuration changes, preserving the problematic state.  
 
-After restoring the snapshot, the VM booted — but returned to the previously broken state, entering **emergency mode** as expected.
+---
 
-> ✅ This confirms that the snapshot captured the VM *after* the problematic changes were made, validating both the timing of the snapshot and the recovery process.
+## Resolution & Recovery
+1. Powered off the VM.  
+2. Restored snapshot via **VirtualBox → Snapshots tab**.  
+3. Booted VM and verified state.  
+4. Performed log review (`sudo less /var/log/boot.log`) to confirm issues.  
+5. Conducted network and connectivity tests post-restore.  
 
-## Initial Troubleshooting
+| Description                    | Image                                         |
+|--------------------------------|------------------------------------------------|
+| Snapshot list before restore   | ![](../images/snapshot-restore-before.png)     |
+| Restore confirmation dialog    | ![](../images/snapshot-restore-confirm.png)    |
+| Ping test after restore        | ![](../images/ping-success-after-restore.png)  |
+| IP assigned after restore      | ![](../images/ip-a-after-restore.png)          |
 
-After restoring the snapshot, the system booted but still displayed instability. To begin diagnostics, `boot.log` was reviewed for any critical failures during startup.
-
-### Steps Taken:
-
-1. Booted the VM into the current (problematic) state.
-2. Accessed the terminal using `Ctrl+Alt+F2` if necessary.
-3. Ran the following command to inspect boot messages:
-
-sudo less /var/log/boot.log
-
-4. Scanned for `[FAILED]` units or other error messages.
-5. Captured screenshot showing logged errors.
-
-| Description              | Image                                       |
-|--------------------------|---------------------------------------------|
-| Boot log with failures   | ![](../images/snapshot-troubleshoot.png)   |
-
-> 🧠 The log output confirmed the system was in a degraded state, supporting the need to fully restore to a known good configuration prior to the problematic changes.
+---
 
 ## Verification
+- VM booted successfully to Ubuntu desktop.  
+- `ping google.com` succeeded ✅  
+- `ip a` showed DHCP-assigned IP address ✅  
+- User confirmed system stability and functionality.  
 
-Once the snapshot was restored and boot log reviewed, the VM eventually booted normally again. The user confirmed desktop access and tested network functionality.
+---
 
-Terminal checks were run to confirm full recovery:
+## Closure
+- Ticket status set to *Resolved*.  
+- Confirmed recovery with reporting user prior to closure.  
 
-ping google.com
-ip a
+---
 
-| Description              | Image                                           |
-|--------------------------|-------------------------------------------------|
-| Ping test after restore  | ![](../images/ping-success-after-restore.png)  |
-| IP assigned after restore| ![](../images/ip-a-after-restore.png)          |
+## Lessons Learned
+- Snapshots must be carefully timed, ensure snapshots are taken *before* major changes, not after.  
+- Inconsistent boot behavior highlights the need for log review, not just surface-level checks.  
+- Importance of snapshot strategy: regular, well-timed snapshots enable quick recovery and reduce downtime.  
 
-> ✅ These results confirmed that the VM had returned to a stable, functioning state following the snapshot restoration.
-
-## Reflection
-
-This exercise showed me how important snapshots are for quickly recovering from unexpected issues. The VM’s inconsistent boot behavior caught me off guard. Sometimes it failed with errors, other times it booted fine but with warnings. This made me realise the value of thorough verification after fixes.
-
-Checking the boot logs was key to understanding the root of the problem instead of guessing. Overall, regular snapshots, careful troubleshooting, and good documentation are essential to handle real-world IT problems smoothly.
-
+---
