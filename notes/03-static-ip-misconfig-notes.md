@@ -76,12 +76,12 @@ Findings: Netplan showed misaligned config; resolv.conf pointed to unreachable/m
 ## Resolution & Recovery
 I reverted the interface back to **DHCP** so the VM could automatically pull a valid IP, gateway, and DNS from NAT:
 
-nmcli connection modify "netplan-enp0s3" ipv4.addresses ""  
-nmcli connection modify "netplan-enp0s3" ipv4.gateway ""  
-nmcli connection modify "netplan-enp0s3" ipv4.dns ""  
-nmcli connection modify "netplan-enp0s3" ipv4.method auto  
-nmcli connection down "netplan-enp0s3"  
-nmcli connection up "netplan-enp0s3"
+nmcli connection modify "netplan-enp0s3" ipv4.addresses ""
+    nmcli connection modify "netplan-enp0s3" ipv4.gateway ""
+    nmcli connection modify "netplan-enp0s3" ipv4.dns ""
+    nmcli connection modify "netplan-enp0s3" ipv4.method auto
+    nmcli connection down "netplan-enp0s3"
+    nmcli connection up "netplan-enp0s3"
 
 Screenshots:  
 ![Static IP applied but failed to reach the internet](../images/static-ip-fix.png)  
