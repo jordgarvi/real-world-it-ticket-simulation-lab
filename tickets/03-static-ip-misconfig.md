@@ -67,8 +67,10 @@ cat /etc/resolv.conf
 ---
 
 ## Resolution & Recovery
+
 ### Fix Applied
-Reverted the network interface to DHCP using NetworkManager:
+
+Reverted the network interface to DHCP using NetworkManager. This ensures the system obtains a working dynamic IP configuration:
 
 nmcli connection modify "netplan-enp0s3" ipv4.addresses ""
 nmcli connection modify "netplan-enp0s3" ipv4.gateway ""
@@ -91,7 +93,7 @@ nmcli connection up "netplan-enp0s3"
 
 ---
 
-## Closure
+## Closur
 - Ticket status set to Resolved
 - User confirmed access restored
 
