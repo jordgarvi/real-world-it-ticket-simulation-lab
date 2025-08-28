@@ -1,130 +1,95 @@
 # Notes – Ticket 03: Static IP Misconfiguration
 
 ## Issue Overview
-
-This issue simulated a common mistake in real world IT: misconfiguring a static IP address on a Linux VM, resulting in a total loss of connectivity. The objective was to troubleshoot and recover from the broken state using command-line tools and logical analysis.
+This was a realistic “oops” moment: I applied a static IP on an Ubuntu VM and broke connectivity. The aim wasn’t just to fix it—it was to show a methodical approach: confirm the scope, isolate the layer that’s failing (IP vs route vs DNS), restore service quickly, and document the learning.
 
 ---
 
 ## Environment
-
-- **VirtualBox**: 7.1.6  
-- **Guest OS**: Ubuntu 22.04 LTS  
-- **Host OS**: Windows 11 (24H2)  
-- **Network Mode**: NAT  
-- **Account**: `jordan-bradfield` (non-root)
-
----
-
-## Problem Simulation
-
-The system was manually assigned a static IP with the wrong subnet or gateway via NetworkManager (`nmcli`). This broke routing and DNS.
+- VirtualBox: 7.1.6  
+- Guest OS: Ubuntu 22.04 LTS  
+- Host OS: Windows 11 (24H2)  
+- Network Mode: NAT  
+- Account: `jordan-bradfield` (non-root)
 
 ---
 
-## Step-by-Step Diagnostics
+## What I Broke (Problem Simulation)
+I set a static IP using NetworkManager with an **incorrect gateway/DNS**. That severed the VM’s path to the internet (routing) and name resolution (DNS). This mirrors common real-world incidents: wrong VLAN/subnet, mismatched gateway, or DNS pointing to a dead server.
 
-### 1. Check Current IP Address
+---
 
-```bash
-ip a
-```
+## Troubleshooting Timeline (What I checked and why)
 
-- **What it does:** Lists all active interfaces and their assigned IPs.  
-- **Why used:** To verify if the static IP was applied and whether DHCP was bypassed.
-
+### 1) Current address & link state
+Command: ip a  
+- Purpose: Confirm the interface is up and what address it has (static vs DHCP).  
+- Key thought: “A static IP alone doesn’t prove ‘working’; I still need a valid route.”  
 ![Output showing static IP address applied](../images/Terminal-output-of-ip-a.png)
 
 ---
 
-### 2. Review Routing Table
-
-```bash
-ip route
-```
-
-- **What it does:** Displays current routing rules.  
-- **Why used:** To see if a default gateway exists to allow outbound traffic.
-
+### 2) Routing table (is there a way out?)
+Command: ip route  
+- Purpose: Look for a **default route**; without it, traffic can’t leave the subnet.  
+- Finding: No usable default route.  
 ![Output of `ip route` showing no default gateway](../images/ip-route.png)
 
 ---
 
-### 3. Inspect NetworkManager Configuration
-
-```bash
-nmcli connection show "netplan-enp0s3"
-```
-
-- **What it does:** Lists detailed config values for the specified network profile.  
-- **Why used:** To confirm the static IP, gateway, and DNS settings were applied.
-
+### 3) NetworkManager profile (what did I actually configure?)
+Command: nmcli connection show "netplan-enp0s3"  
+- Purpose: Verify the exact IPv4 address, gateway, and DNS I set.  
+- Finding: Static values were present but wrong for this NAT network.  
 ![nmcli showing misconfigured values](../images/nmcli-connection-show.png)
 
 ---
 
-### 4. Test Network Connectivity
-
-```bash
-ping -c 3 8.8.8.8
-ping -c 3 google.com
-```
-
-- **What it does:** Sends ICMP echo requests to test if the system can reach external IPs (`8.8.8.8`) or resolve domains (`google.com`).  
-- **Why used:** These are **essential tools** to determine if the failure is due to routing (IP-level) or DNS (name resolution).
-
+### 4) Connectivity tests (separate routing vs DNS)
+Commands:  
+- ping -c 3 8.8.8.8  (tests raw IP reachability/routing)  
+- ping -c 3 google.com  (adds DNS resolution to the mix)  
+- Finding: Both failed → not just DNS; routing was broken too.  
 ![Ping test failing for both IP and domain](../images/ping-failure(2).png)
-
-> **Observation**: All pings failed, indicating no route to the internet and DNS failure. Confirmed misconfiguration.
 
 ---
 
-## Additional Troubleshooting
+## Additional Verification
+Commands:  
+- cat /etc/netplan/*.yaml  (persistent network config)  
+- cat /etc/resolv.conf  (DNS servers actually in use)  
 
-More low level verification was performed to isolate the cause.
-
-```bash
-cat /etc/netplan/*.yaml
-cat /etc/resolv.conf
-```
-
-- **netplan** defines network configs on Ubuntu.  
-- **resolv.conf** lists current DNS servers.  
-
+Findings: Netplan showed misaligned config; resolv.conf pointed to unreachable/missing DNS.  
 ![Broken netplan configuration missing gateway or DNS](../images/netplan-yaml.png)  
 ![resolv.conf missing or showing unreachable DNS](../images/resolv-conf.png)
 
 ---
 
-## Root Cause
-
-- The static IP (`10.0.2.50`) did not match any valid route in VirtualBox's NAT setup.  
-- The gateway was unreachable or mismatched.  
-- DNS servers were either missing or unreachable.  
-- No default route meant no outbound traffic.
+## Root Cause (Plain English)
+- The chosen static IP/subnet didn’t align with VirtualBox NAT.  
+- The default gateway was invalid or unreachable.  
+- DNS servers were missing or unreachable.  
+- No valid default route → no outbound traffic (so even good DNS wouldn’t help).
 
 ---
 
-## Fix – Restore DHCP Configuration
+## Resolution & Recovery
+I reverted the interface back to **DHCP** so the VM could automatically pull a valid IP, gateway, and DNS from NAT:
 
-The misconfigured static setup was reverted to **automatic IP allocation** (DHCP):
-
-```bash
-nmcli connection modify "netplan-enp0s3" ipv4.addresses ""
-nmcli connection modify "netplan-enp0s3" ipv4.gateway ""
-nmcli connection modify "netplan-enp0s3" ipv4.dns ""
-nmcli connection modify "netplan-enp0s3" ipv4.method auto
-nmcli connection down "netplan-enp0s3"
+nmcli connection modify "netplan-enp0s3" ipv4.addresses ""  
+nmcli connection modify "netplan-enp0s3" ipv4.gateway ""  
+nmcli connection modify "netplan-enp0s3" ipv4.dns ""  
+nmcli connection modify "netplan-enp0s3" ipv4.method auto  
+nmcli connection down "netplan-enp0s3"  
 nmcli connection up "netplan-enp0s3"
-```
 
+Screenshots:  
 ![Static IP applied but failed to reach the internet](../images/static-ip-fix.png)  
 ![DHCP successfully re-applied via nmcli](../images/apply-fix.png)
 
 ---
 
 ## Before vs After
-
 **Ping Failure (Static Misconfiguration)**  
 ![8.8.8.8 unreachable](../images/ping-failure(2).png)
 
@@ -134,25 +99,30 @@ nmcli connection up "netplan-enp0s3"
 ---
 
 ## Recovery Validation
-
 After the fix:
-
-- `ip a` confirmed a valid DHCP IP assigned: `192.168.x.x`  
-- `ip route` showed a working default gateway  
-- `/etc/resolv.conf` listed DNS servers like `8.8.8.8`  
-- `ping google.com` worked again, DNS and routing both recovered
-
----
-
-## Lessons & Takeaways
-
-- Static IP configs **must include** a reachable gateway and DNS.  
-- `ip route` is essential to confirm if **traffic can leave** the VM.  
-- Reverting to DHCP is a reliable recovery tool in dynamic environments.  
-- `nmcli`, `netplan`, and `resolv.conf` give a **layered view** of your network state.  
-- This mirrors real world scenarios, like deploying laptops with static IPs in the wrong VLAN or without gateway access.
+- ip a → valid DHCP lease (192.168.x.x)  
+- ip route → correct default gateway present  
+- /etc/resolv.conf → working DNS servers  
+- ping google.com → routing + DNS confirmed healthy
 
 ---
 
-> **Professional Insight**  
-Knowing how to recover from a failed network config **without rebooting** and using tools like `nmcli` under pressure is a real IT skill. It shows confidence, experience, and adaptability in high-stakes environments.
+## Command Cheat Sheet (What each tool did for me)
+- ip a — Shows interfaces, state, and IPs. First, I proved the static IP was applied.  
+- ip route — Shows the routing table. Missing/invalid default route explained the failure.  
+- nmcli connection show "netplan-enp0s3" — Revealed exactly which static values were set.  
+- ping 8.8.8.8 — Tests routing to a known external IP (ignores DNS).  
+- ping google.com — Adds DNS to the test; if this fails but 8.8.8.8 works, it’s a DNS issue.  
+- cat /etc/netplan/*.yaml — Persistent network config; errors here break connectivity at boot.  
+- cat /etc/resolv.conf — DNS servers the system is actually using.  
+- nmcli connection modify … — Cleared static settings and set DHCP (ipv4.method auto).  
+- nmcli connection down/up — Restarted the connection so changes took effect immediately.
+
+---
+
+## Lessons & What I’d Do Next Time
+- Static IPs must be complete: **IP + subnet + gateway + DNS** and must match the network design.  
+- Always check **ip route** early; it quickly tells you if there’s any way out.  
+- Test in layers: ping an IP first (routing), then a hostname (DNS).  
+- In a pinch, revert to **DHCP** to restore service fast, then reapply a correct static config with the right gateway.  
+- This was a service restoration scenario in ITIL terms: identify the error, restore service quickly, document the root cause, and prevent recurrence.
