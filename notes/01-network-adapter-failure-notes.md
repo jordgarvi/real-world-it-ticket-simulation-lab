@@ -2,114 +2,116 @@
 
 ## Issue Overview
 
-This issue simulated a **common real-world problem**: a VM not connecting to the internet due to a disabled network adapter. It reinforced the importance of verifying *both* the guest OS and host virtualization platform when troubleshooting connectivity.
+This replicated a practical IT scenario: a VM could not access the internet because its virtual network adapter was disabled. The exercise reinforced checking both the guest OS and the host/virtualisation layer early in troubleshooting.
 
 ---
 
 ## Environment
 
-- **Virtualization Tool**: VirtualBox 7.1.6  
-- **Guest OS**: Ubuntu 22.04 LTS  
-- **Host OS**: Windows 11 (24H2)  
-- **VM Network Mode**: Bridged Adapter  
-- **Account Used**: `jordan-bradfield` (non-root)
+- **Virtualisation Tool:** VirtualBox 7.1.6  
+- **Guest OS:** Ubuntu 22.04 LTS  
+- **Host OS:** Windows 11 (24H2)  
+- **VM Network Mode:** Bridged Adapter  
+- **Account Used:** `jordan-bradfield` (non-root)
 
 ---
 
 ## Symptoms Observed
 
-- Missing network icon in Ubuntu GUI  
-- `ping google.com` returned: `Temporary failure in name resolution`  
+- Network icon missing in the Ubuntu GUI  
+- `ping google.com` → `Temporary failure in name resolution`  
 - No IP assigned to the interface (`ip a` showed only loopback)  
 
-These symptoms clearly suggested **no active network interface** on the VM.
+These symptoms indicated the VM had no active network interface.
 
 ---
 
-## Key Diagnostic Commands and Their Purpose
+## Key Diagnostic Commands and Purpose
 
-### 1. Check IP address:  
-```bash
-ip a
-```
+1. Check IP address and interfaces  
+    ip a  
+   - Shows all interfaces and assigned IPs. Confirmed only loopback was present.
 
-- **What it does:** Shows all network interfaces and their IP addresses on the system.  
-- **Why I ran it:** To check if the VM had an active network interface with a valid IP address. Seeing only the loopback interface means no network was assigned.
+2. Test DNS resolution and basic connectivity  
+    ping google.com  
+   - Tests both reachability and DNS resolution. Failure suggested no network or DNS.
 
-### 2. Test DNS resolution and connectivity:  
-```bash
-ping google.com
-```
+3. Check the network manager service status  
+    systemctl status NetworkManager  
+   - Verifies NetworkManager is running; useful if the adapter is present but not managed.
 
-- **What it does:** Sends ICMP echo requests (“pings”) to `google.com` to test network connectivity and DNS resolution.  
-- **Why I ran it:** To verify if the VM can reach external hosts and resolve domain names. The failure indicated either no network or broken DNS.
+4. Inspect NetworkManager connections  
+    nmcli connection show  
+   - Lists configured connections and their state; helps identify inactive profiles.
+
+5. Test DNS directly (bypass local resolver)  
+    dig @8.8.8.8 google.com  
+   - Confirms whether DNS resolution works externally, isolating DNS vs routing issues.
 
 ---
 
 ## Root Cause
 
-VirtualBox **Adapter 1** was disabled in VM settings. Since the guest OS couldn’t detect a physical NIC, it couldn’t obtain an IP address or connect to the internet.
+VirtualBox **Adapter 1** was disabled in the VM settings. The guest OS could not detect a NIC and therefore could not obtain a DHCP lease or access the network.
 
 ---
 
 ## Fix Applied
 
-1. **Powered off** the Ubuntu VM.  
-2. Opened VirtualBox → **Settings → Network**  
+1. Powered off the Ubuntu VM.  
+2. Opened VirtualBox → **Settings → Network**.  
 3. Enabled **Adapter 1**.  
-4. Set the attached mode to **Bridged Adapter**.  
-5. Selected the correct host NIC (Ethernet).  
-6. Booted VM and tested connectivity again.
+4. Set the adapter to **Bridged Adapter** and selected the host Ethernet NIC.  
+5. Booted the VM and re-tested connectivity.
 
 ---
 
 ## Verifying the Fix
 
-### 1. Check IP after fix:  
-```bash
-ip a
-```
+1. Confirm IP assignment  
+    ip a  
+   - A valid DHCP IP (e.g., `192.168.x.x`) appeared on the VM interface.
 
-- The output now shows a valid IP address (e.g., `192.168.x.x`) assigned to the VM’s network interface (`enp0s3`). This confirms the VM is connected to the network.
+2. Confirm external connectivity and DNS  
+    ping google.com  
+   - Successful replies confirmed both network and DNS resolution.
 
-### 2. Confirm internet connectivity:  
-```bash
-ping google.com
-```
+---
 
-- Successful ping responses confirm the VM can resolve domain names and communicate with external servers.
+## Escalation Paths (if the above fix had not worked)
+
+- Restart networking services on the guest:  
+    sudo systemctl restart NetworkManager
+
+- Inspect recent NetworkManager logs for clues:  
+    journalctl -u NetworkManager --since "10 minutes ago"
+
+- Test an alternate adapter mode to isolate host vs bridged issues: switch VM network to NAT and re-test.
+
+- Verify the host NIC and firewall/AV settings: ensure the host interface is up and not blocked by security software.
 
 ---
 
 ## Additional Troubleshooting Tips
 
-- If bridged mode does not work as expected, try switching the VM network adapter to **NAT** mode temporarily to check if that restores connectivity.  
-- Verify that the **host network adapter** is active and connected, as bridged mode relies on this.  
-- Check **VirtualBox host-only network** and firewall settings on the host machine, which can sometimes block or restrict VM network traffic.
+- Power off the VM before changing VirtualBox network settings to avoid inconsistent states.  
+- Bridged mode requires a physically connected host NIC; if the host is on Wi-Fi or disconnected, consider NAT for testing.  
+- Temporarily disable host firewall/antivirus if you suspect VM traffic is being blocked.
 
 ---
 
-## Potential Pitfalls and Warnings
+## Broader Application
 
-- Always **power off the VM** before changing VirtualBox network settings to avoid configuration errors or crashes.  
-- Bridged networking requires the host NIC to be **physically connected and active**; otherwise, the VM won’t get an IP address.  
-- Some **firewall or antivirus software** on the host can block VM network traffic, temporarily disable them if you suspect this.
-
----
-
-## Broader Application of This Issue
-
-Although this issue occurred in VirtualBox, the principle of checking **virtualization layer settings** applies to other hypervisors like VMware and Hyper-V. Likewise, physical machines may encounter similar issues if network adapters are disabled or misconfigured.
+The same principle applies across hypervisors (VMware, Hyper-V, Proxmox): always include the virtualisation layer in your checklist. Physical machines show similar symptoms when network adapters or drivers are disabled.
 
 ---
 
 ## Key Takeaways
 
-> **Always check the virtualization layer and host network adapters first when a VM has connectivity issues.**  
->  
-> Using simple commands like `ip a` and `ping` methodically helps quickly pinpoint network problems.  
->  
-> Documenting troubleshooting steps clearly makes it easier to reproduce and resolve similar issues in the future.
+- Begin with simple, layered checks (`ip a`, `ping`) to quickly narrow the problem.  
+- Include virtualization/host checks early when the issue affects a VM.  
+- Use `nmcli`, `systemctl`, and `dig` to broaden diagnostic coverage beyond basic pings.  
+- Prepare escalation steps to show depth of troubleshooting if the obvious fix fails.
 
 ---
 
@@ -117,20 +119,17 @@ Although this issue occurred in VirtualBox, the principle of checking **virtuali
 
 | Description                        | Image Path                                |  
 |------------------------------------|--------------------------------------------|  
-| Disabled adapter in VirtualBox     | ![](../images/network-disabled.png)     |  
-| Ubuntu with no connection          | ![](../images/ubuntu-no-network.png)    |  
-| Ping failure                       | ![](../images/ping-failure.png)         |  
-| Enabled adapter in VirtualBox      | ![](../images/network-enabled.png)      |  
-| Successful DHCP IP assignment      | ![](../images/ip-a-success.png)         |  
-| Ping success (after fix)           | ![](../images/ping-success.png)         |
+| Disabled adapter in VirtualBox     | ![](../images/network-disabled.png)        |  
+| Ubuntu with no connection          | ![](../images/ubuntu-no-network.png)       |  
+| Ping failure                       | ![](../images/ping-failure.png)            |  
+| Enabled adapter in VirtualBox      | ![](../images/network-enabled.png)         |  
+| Successful DHCP IP assignment      | ![](../images/ip-a-success.png)            |  
+| Ping success (after fix)           | ![](../images/ping-success.png)            |
 
 ---
 
-## Final Thoughts
+## Final Thoughts & Forward Link
 
-This was a small but realistic scenario — a disabled network adapter is easy to overlook. It helped reinforce a key principle:  
-> **Always check the virtualization layer when network problems arise in a VM.**
+This was a small but realistic issue, disabled adapters are easy to overlook. The exercise reinforced the value of methodical checks across OS and virtualisation layers.
 
-Using simple commands like `ip a` and `ping` in a logical order helped quickly pinpoint the issue. Documenting the process ensures I can easily repeat the troubleshooting if needed.
-
----
+In the next ticket I’ll expand into **firewall rules**: simulating blocked traffic (e.g., HTTPS blocked by pfSense) and demonstrating log-based troubleshooting and rule remediation.
