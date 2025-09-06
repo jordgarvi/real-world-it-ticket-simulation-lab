@@ -73,6 +73,21 @@ Ubuntu VM unable to connect to the internet due to disabled virtual network adap
 
 ---
 
+## Next Steps – Firewall Rules
+
+### What to Demonstrate
+- Configure and test firewall rules using UFW (Linux), Windows Firewall, or pfSense.
+- Block or allow specific ports (e.g., HTTP, HTTPS) to simulate real-world scenarios.
+- Replicate a user report such as *“I can’t access the web server”* and confirm blocked traffic through inspection.
+- Troubleshoot by reviewing logs (`ufw status`, Windows Firewall logs, pfSense rule logs).
+
+### Example Future Ticket
+**Issue:** Users unable to access an internal web application.  
+**Root Cause:** pfSense firewall blocking TCP port 443.  
+**Resolution:** Created a rule allowing HTTPS traffic from VLAN 30 to the server, confirmed access was restored.  
+
+---
+
 ## Screenshots
 
 | Description                        | Image                                 |
