@@ -41,3 +41,18 @@ Each markdown file under the `tickets/` folder represents a separate support cas
 ## Notes
 
 This is a personal learning lab built to replicate real support scenarios as a solo project. Each scenario is designed to demonstrate initiative and practical knowledge, helping bridge the gap between study and real world IT roles.
+
+---
+
+## Next Steps
+
+This lab is an evolving project. Upcoming areas of focus will take the troubleshooting scenarios to a more advanced level:
+
+- **Firewall Rules** – Block/allow traffic with UFW (Linux), Windows Firewall, and pfSense. Simulate real user reports like “I can’t access the web server,” then troubleshoot with firewall logs and rules.  
+- **VLANs & Routing** – Create isolated virtual networks in VirtualBox, configure routing between VLANs, and simulate inter-departmental traffic restrictions.  
+- **VPN Configuration** – Set up a VPN server (e.g., OpenVPN or pfSense) to simulate secure remote access and troubleshoot connection failures.  
+- **Active Directory Integration** – Explore Windows domain joins, group policies, and account management tickets.  
+- **Cloud Scenarios** – Replicate IT support incidents in AWS/Azure environments for hybrid lab practice.
+
+
+
