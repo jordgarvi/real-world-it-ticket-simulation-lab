@@ -53,6 +53,13 @@ cat /etc/resolv.conf
 - Netplan YAML misconfigured
 - NetworkManager settings applied but invalid
 
+### Escalation Considerations (If Initial Fix Failed)
+- Manually add a default gateway: `sudo ip route add default via <gateway-ip>`
+- Restart network services: `sudo systemctl restart NetworkManager`
+- Check deeper logs: `journalctl -u NetworkManager`
+- Test DNS more directly: `dig @8.8.8.8 google.com`
+- Use `traceroute 8.8.8.8` to see where packets drop
+
 ### Screenshots
 | Description | Screenshot |
 |-------------|------------|
