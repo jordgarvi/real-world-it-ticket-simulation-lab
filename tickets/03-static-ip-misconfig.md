@@ -107,8 +107,26 @@ nmcli connection up "netplan-enp0s3"
 ---
 
 ## Lessons Learned
-- Static IP configuration must include IP, gateway, and DNS
-- Misconfigured gateway or NAT can block connectivity
-- Reverting to DHCP quickly confirms root cause
-- Structured ITIL workflow: log, categorise, investigate, resolve, verify, reflect
-- nmcli, ip route, and resolv.conf are essential troubleshooting tools
+- Static IP configuration must include IP, gateway, and DNS  
+- Misconfigured gateway or NAT can block connectivity  
+- Reverting to DHCP quickly confirms root cause  
+- Structured ITIL workflow: log, categorise, investigate, resolve, verify, reflect  
+- nmcli, ip route, and resolv.conf are essential troubleshooting tools  
+- Future prevention: document static configurations clearly and always test them in a controlled way before applying to production or critical systems  
+
+---
+
+## Lessons Learned & Reflection
+
+- Static IP configuration requires **three key elements**: IP, gateway, and DNS. Missing one breaks connectivity.  
+- A misconfigured gateway or DNS will silently block traffic, so always validate with `ip route` and `cat /etc/resolv.conf`.  
+- Reverting to DHCP is not just a quick fix, it’s a powerful diagnostic step that confirms whether the root cause lies in static configs.  
+- Wider command use (`nmcli`, `journalctl`, `traceroute`) adds confidence and demonstrates professional troubleshooting depth.  
+- To avoid similar issues in the future:  
+  - **Document static network configurations** before applying.  
+  - **Test changes in a non-critical VM** to verify stability.  
+  - **Keep a fallback DHCP profile** so recovery is immediate if a static setup fails.  
+
+> This ticket reminded me how easily small oversights in networking configs can take down connectivity, and how planning, documentation, and testing are the real safeguards against repeat issues.
+  
+
