@@ -120,9 +120,35 @@ After the fix:
 
 ---
 
+--- 
+
+## Command Diversity (Advanced Troubleshooting)
+
+In addition to the core commands used, these commands/tools demonstrate deeper troubleshooting capability and preparation for complex network issues:
+
+- `traceroute 8.8.8.8` — Determines the path packets take and where they may be dropped; useful for isolating routing problems beyond the local VM.  
+- `dig @8.8.8.8 google.com` — Tests DNS resolution directly against a specified DNS server, bypassing local resolver issues.  
+- `systemctl status NetworkManager` — Checks the active state of the network service and identifies any failed units.  
+- `journalctl -u NetworkManager` — Reviews detailed logs for the network service to catch misconfigurations or errors not visible in simple ping tests.  
+- `df -h` — Checks disk space, useful if service failures are related to full volumes after restoration or configuration changes.
+
+> Using these commands shows readiness for more complex, real-world scenarios and highlights systematic troubleshooting beyond the basics.
+
+---
+
+--- 
+
 ## Lessons & What I’d Do Next Time
-- Static IPs must be complete: **IP + subnet + gateway + DNS** and must match the network design.  
-- Always check **ip route** early; it quickly tells you if there’s any way out.  
+
+- Static IP configurations must be complete: **IP + subnet + gateway + DNS** and aligned with the network design.  
+- Always check **ip route** early; it quickly tells you if there’s any path out of the subnet.  
 - Test in layers: ping an IP first (routing), then a hostname (DNS).  
-- In a pinch, revert to **DHCP** to restore service fast, then reapply a correct static config with the right gateway.  
-- This was a service restoration scenario in ITIL terms: identify the error, restore service quickly, document the root cause, and prevent recurrence.
+- In a pinch, revert to **DHCP** to restore service quickly, then reapply a correct static configuration with the right gateway.  
+- Use advanced tools to gain deeper insight into network issues:  
+  - `traceroute` to trace packet paths beyond the VM  
+  - `dig` to validate DNS resolution from different servers  
+  - `systemctl status NetworkManager` and `journalctl -u NetworkManager` for service-level troubleshooting  
+  - `df -h` to check if disk space could impact service behavior  
+
+> Overall, this ticket reinforced a structured troubleshooting approach: restore service promptly, isolate root cause, document clearly, and layer in advanced commands for more complex scenarios. This not only solves the immediate issue but builds confidence for handling real-world, multi-layer network incidents.
+
